@@ -1,0 +1,74 @@
+{
+  "name": "sap-cdc-user-management",
+  "description": "Expert skill for SAP CDC user management operations including account creation, login, authentication, user data management, and logout",
+  "base_url": "https://help.sap.com/docs/SAP_CUSTOMER_DATA_CLOUD",
+  "selectors": {
+    "main_content": "article, .content-area, main",
+    "title": "h1, .page-title",
+    "code_blocks": "pre code, .code-block"
+  },
+  "rate_limit": 0.5,
+  "max_pages": 150,
+  "categories": {
+    "account_management": [
+      "accounts.register",
+      "accounts.initRegistration",
+      "accounts.finalizeRegistration",
+      "accounts.login",
+      "accounts.logout",
+      "accounts.getAccountInfo",
+      "accounts.setAccountInfo",
+      "accounts.deleteAccount"
+    ],
+    "authentication": [
+      "accounts.socialLogin",
+      "accounts.linkAccounts",
+      "accounts.unlinkAccounts",
+      "accounts.verifyLogin",
+      "accounts.isAvailableLoginID"
+    ],
+    "profile_management": [
+      "accounts.getProfile",
+      "accounts.setProfile",
+      "accounts.updateProfile"
+    ],
+    "password_management": [
+      "accounts.resetPassword",
+      "accounts.changePassword",
+      "accounts.forgotPassword"
+    ],
+    "session_management": [
+      "accounts.getJWT",
+      "accounts.refreshJWT",
+      "accounts.session.verify"
+    ]
+  },
+  "focus_areas": [
+    "User registration flows",
+    "Login and authentication patterns",
+    "Profile data management",
+    "Password reset workflows",
+    "Session handling",
+    "Social login integration",
+    "Account linking",
+    "User data retrieval and updates",
+    "Logout procedures",
+    "JWT token management"
+  ],
+  "skill_type": "role-based",
+  "role": "user-management-expert",
+  "target_apis": [
+    "accounts.register",
+    "accounts.login",
+    "accounts.logout",
+    "accounts.getAccountInfo",
+    "accounts.setAccountInfo",
+    "accounts.getProfile",
+    "accounts.setProfile",
+    "accounts.resetPassword",
+    "accounts.changePassword",
+    "accounts.socialLogin",
+    "accounts.linkAccounts",
+    "accounts.getJWT"
+  ]
+}

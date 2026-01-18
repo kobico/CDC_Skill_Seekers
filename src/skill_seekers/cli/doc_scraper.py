@@ -203,7 +203,7 @@ class DocToSkillConverter:
         # Create directories (unless dry-run)
         if not dry_run:
             os.makedirs(f"{self.data_dir}/pages", exist_ok=True)
-            os.makedirs(f"{self.skill_dir}/references", exist_ok=True)
+            os.makedirs(f"{self.skill_dir}/docs", exist_ok=True)
             os.makedirs(f"{self.skill_dir}/scripts", exist_ok=True)
             os.makedirs(f"{self.skill_dir}/assets", exist_ok=True)
 
@@ -299,12 +299,34 @@ class DocToSkillConverter:
             "links": [],
         }
 
+        selectors = self.config.get('selectors', {})
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
+
+        # Extract title
+        title_elem = soup.select_one(selectors.get("title", "title"))
+        if title_elem:
+<<<<<<< HEAD
+            page["title"] = self.clean_text(title_elem.get_text())
+            page['title'] = self.clean_text(title_elem.get_text())
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
         selectors = self.config.get("selectors", {})
 
         # Extract title
         title_elem = soup.select_one(selectors.get("title", "title"))
         if title_elem:
             page["title"] = self.clean_text(title_elem.get_text())
+=======
+        selectors = self.config.get('selectors', {})
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
+
+        # Extract title
+        title_elem = soup.select_one(selectors.get("title", "title"))
+        if title_elem:
+<<<<<<< HEAD
+            page["title"] = self.clean_text(title_elem.get_text())
+=======
+            page['title'] = self.clean_text(title_elem.get_text())
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
 
         # Find main content
         main_selector = selectors.get("main_content", 'div[role="main"]')
@@ -318,7 +340,20 @@ class DocToSkillConverter:
         for h in main.find_all(["h1", "h2", "h3", "h4", "h5", "h6"]):
             text = self.clean_text(h.get_text())
             if text:
+                page['headings'].append({
+                    'level': h.name,
+                    'text': text,
+                    'id': h.get('id', '')
+                })
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
                 page["headings"].append({"level": h.name, "text": text, "id": h.get("id", "")})
+=======
+                page['headings'].append({
+                    'level': h.name,
+                    'text': text,
+                    'id': h.get('id', '')
+                })
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
 
         # Extract code with language detection
         code_selector = selectors.get("code_blocks", "pre code")
@@ -327,10 +362,27 @@ class DocToSkillConverter:
             if len(code.strip()) > 10:
                 # Try to detect language
                 lang = self.detect_language(code_elem, code)
+                page['code_samples'].append({
+                    'code': code.strip(),
+                    'language': lang
+                })
+
+        # Extract patterns (NEW: common code patterns)
+        page['patterns'] = self.extract_patterns(main, page['code_samples'])
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
                 page["code_samples"].append({"code": code.strip(), "language": lang})
 
         # Extract patterns (NEW: common code patterns)
         page["patterns"] = self.extract_patterns(main, page["code_samples"])
+=======
+                page['code_samples'].append({
+                    'code': code.strip(),
+                    'language': lang
+                })
+
+        # Extract patterns (NEW: common code patterns)
+        page['patterns'] = self.extract_patterns(main, page['code_samples'])
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
 
         # Extract paragraphs
         paragraphs = []
@@ -339,7 +391,12 @@ class DocToSkillConverter:
             if text and len(text) > 20:  # Skip very short paragraphs
                 paragraphs.append(text)
 
+        page['content'] = '\n\n'.join(paragraphs)
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
         page["content"] = "\n\n".join(paragraphs)
+=======
+        page['content'] = '\n\n'.join(paragraphs)
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
 
         # Extract links from entire page (not just main content)
         # This allows discovery of navigation links outside the main content area
@@ -544,9 +601,13 @@ class DocToSkillConverter:
 
         return lang  # Return string for backward compatibility
 
-    def extract_patterns(
-        self, main: Any, _code_samples: list[dict[str, Any]]
-    ) -> list[dict[str, str]]:
+<<<<<<< HEAD
+    def extract_patterns(self, main: Any, code_samples: List[Dict[str, Any]]) -> List[Dict[str, str]]:
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
+    def extract_patterns(self, main: Any, code_samples: list[dict[str, Any]]) -> list[dict[str, str]]:
+=======
+    def extract_patterns(self, main: Any, code_samples: List[Dict[str, Any]]) -> List[Dict[str, str]]:
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
         """Extract common coding patterns (NEW FEATURE)"""
         patterns = []
 
@@ -557,12 +618,21 @@ class DocToSkillConverter:
                 # Get the code that follows
                 next_code = elem.find_next(["pre", "code"])
                 if next_code:
-                    patterns.append(
-                        {
-                            "description": self.clean_text(elem.get_text()),
-                            "code": next_code.get_text().strip(),
-                        }
-                    )
+                    patterns.append({
+                        'description': self.clean_text(elem.get_text()),
+                        'code': next_code.get_text().strip()
+                    })
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
+                    patterns.append({
+                        "description": self.clean_text(elem.get_text()),
+                        "code": next_code.get_text().strip()
+                    })
+=======
+                    patterns.append({
+                        'description': self.clean_text(elem.get_text()),
+                        'code': next_code.get_text().strip()
+                    })
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
 
         return patterns[:5]  # Limit to 5 most relevant patterns
 
@@ -571,7 +641,12 @@ class DocToSkillConverter:
         text = re.sub(r"\s+", " ", text)
         return text.strip()
 
+    def save_page(self, page: Dict[str, Any]) -> None:
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
     def save_page(self, page: dict[str, Any]) -> None:
+=======
+    def save_page(self, page: Dict[str, Any]) -> None:
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
         """Save page data (skip pages with empty content)"""
         # Skip pages with empty or very short content
         if not page.get("content") or len(page.get("content", "")) < 50:
@@ -771,7 +846,7 @@ class DocToSkillConverter:
             if content:
                 # Save explicit file with proper .md extension
                 filename = downloader.get_proper_filename()
-                filepath = os.path.join(self.skill_dir, "references", filename)
+                filepath = os.path.join(self.skill_dir, "docs", filename)
                 os.makedirs(os.path.dirname(filepath), exist_ok=True)
 
                 with open(filepath, "w", encoding="utf-8") as f:
@@ -801,10 +876,15 @@ class DocToSkillConverter:
 
                         if extra_content:
                             extra_filename = extra_downloader.get_proper_filename()
-                            extra_filepath = os.path.join(
-                                self.skill_dir, "references", extra_filename
-                            )
+                            extra_filepath = os.path.join(self.skill_dir, "docs", extra_filename)
+                            with open(extra_filepath, 'w', encoding='utf-8') as f:
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
+                            extra_filepath = os.path.join(self.skill_dir, "docs", extra_filename)
                             with open(extra_filepath, "w", encoding="utf-8") as f:
+=======
+                            extra_filepath = os.path.join(self.skill_dir, "docs", extra_filename)
+                            with open(extra_filepath, 'w', encoding='utf-8') as f:
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
                                 f.write(extra_content)
                             logger.info(
                                 "     ✓ %s (%d chars)",
@@ -886,14 +966,27 @@ class DocToSkillConverter:
             logger.warning("⚠️  Failed to download any variants, falling back to HTML scraping")
             return False
 
-        # Save ALL variants to references/
-        os.makedirs(os.path.join(self.skill_dir, "references"), exist_ok=True)
+        # Save ALL variants to docs/
+        os.makedirs(os.path.join(self.skill_dir, "docs"), exist_ok=True)
 
-        for _variant, data in downloaded.items():
-            filepath = os.path.join(self.skill_dir, "references", data["filename"])
+        for variant, data in downloaded.items():
+            filepath = os.path.join(self.skill_dir, "docs", data['filename'])
+            with open(filepath, 'w', encoding='utf-8') as f:
+                f.write(data['content'])
+            logger.info("  💾 Saved %s", data['filename'])
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
+        for variant, data in downloaded.items():
+            filepath = os.path.join(self.skill_dir, "docs", data["filename"])
             with open(filepath, "w", encoding="utf-8") as f:
                 f.write(data["content"])
             logger.info("  💾 Saved %s", data["filename"])
+=======
+        for variant, data in downloaded.items():
+            filepath = os.path.join(self.skill_dir, "docs", data['filename'])
+            with open(filepath, 'w', encoding='utf-8') as f:
+                f.write(data['content'])
+            logger.info("  💾 Saved %s", data['filename'])
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
 
         # Parse LARGEST variant for skill building
         largest = max(downloaded.items(), key=lambda x: x[1]["size"])
@@ -1247,7 +1340,12 @@ class DocToSkillConverter:
         with open(f"{self.data_dir}/summary.json", "w", encoding="utf-8") as f:
             json.dump(summary, f, indent=2, ensure_ascii=False)
 
+    def load_scraped_data(self) -> List[Dict[str, Any]]:
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
     def load_scraped_data(self) -> list[dict[str, Any]]:
+=======
+    def load_scraped_data(self) -> List[Dict[str, Any]]:
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
         """Load previously scraped data"""
         pages = []
         pages_dir = Path(self.data_dir) / "pages"
@@ -1260,35 +1358,62 @@ class DocToSkillConverter:
                 with open(json_file, encoding="utf-8") as f:
                     pages.append(json.load(f))
             except Exception as e:
-                logger.error(
-                    "⚠️  Error loading scraped data file %s: %s: %s",
-                    json_file,
-                    type(e).__name__,
-                    e,
-                )
-                logger.error(
-                    "   Suggestion: File may be corrupted, consider re-scraping with --fresh"
-                )
+                logger.error("⚠️  Error loading scraped data file %s: %s: %s", json_file, type(e).__name__, e)
+                logger.error("   Suggestion: File may be corrupted, consider re-scraping with --fresh")
+
+        return pages
+
+    def smart_categorize(self, pages: List[Dict[str, Any]]) -> Dict[str, List[Dict[str, Any]]]:
+        """Improved categorization with better pattern matching"""
+        category_defs = self.config.get('categories', {})
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
+                logger.error("⚠️  Error loading scraped data file %s: %s: %s", json_file, type(e).__name__, e)
+                logger.error("   Suggestion: File may be corrupted, consider re-scraping with --fresh")
 
         return pages
 
     def smart_categorize(self, pages: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
         """Improved categorization with better pattern matching"""
         category_defs = self.config.get("categories", {})
+=======
+                logger.error("⚠️  Error loading scraped data file %s: %s: %s", json_file, type(e).__name__, e)
+                logger.error("   Suggestion: File may be corrupted, consider re-scraping with --fresh")
+
+        return pages
+
+    def smart_categorize(self, pages: List[Dict[str, Any]]) -> Dict[str, List[Dict[str, Any]]]:
+        """Improved categorization with better pattern matching"""
+        category_defs = self.config.get('categories', {})
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
 
         # Default smart categories if none provided
         if not category_defs:
             category_defs = self.infer_categories(pages)
 
+        categories: Dict[str, List[Dict[str, Any]]] = {cat: [] for cat in category_defs.keys()}
+        categories['other'] = []
+
+        for page in pages:
+            url = page['url'].lower()
+            title = page['title'].lower()
+            content = page.get('content', '').lower()[:CONTENT_PREVIEW_LENGTH]  # Check first N chars for categorization
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
         categories: dict[str, list[dict[str, Any]]] = {cat: [] for cat in category_defs}
         categories["other"] = []
 
         for page in pages:
             url = page["url"].lower()
             title = page["title"].lower()
-            content = page.get("content", "").lower()[
-                :CONTENT_PREVIEW_LENGTH
-            ]  # Check first N chars for categorization
+            content = page.get("content", "").lower()[:CONTENT_PREVIEW_LENGTH]  # Check first N chars for categorization
+=======
+        categories: Dict[str, List[Dict[str, Any]]] = {cat: [] for cat in category_defs.keys()}
+        categories['other'] = []
+
+        for page in pages:
+            url = page['url'].lower()
+            title = page['title'].lower()
+            content = page.get('content', '').lower()[:CONTENT_PREVIEW_LENGTH]  # Check first N chars for categorization
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
 
             categorized = False
 
@@ -1310,22 +1435,37 @@ class DocToSkillConverter:
                     break
 
             if not categorized:
+                categories['other'].append(page)
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
                 categories["other"].append(page)
+=======
+                categories['other'].append(page)
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
 
         # Remove empty categories
         categories = {k: v for k, v in categories.items() if v}
 
         return categories
 
+    def infer_categories(self, pages: List[Dict[str, Any]]) -> Dict[str, List[str]]:
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
     def infer_categories(self, pages: list[dict[str, Any]]) -> dict[str, list[str]]:
+=======
+    def infer_categories(self, pages: List[Dict[str, Any]]) -> Dict[str, List[str]]:
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
         """Infer categories from URL patterns (IMPROVED)"""
         url_segments: defaultdict[str, int] = defaultdict(int)
 
         for page in pages:
+            path = urlparse(page['url']).path
+            segments = [s for s in path.split('/') if s and s not in ['en', 'stable', 'latest', 'docs']]
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
             path = urlparse(page["url"]).path
-            segments = [
-                s for s in path.split("/") if s and s not in ["en", "stable", "latest", "docs"]
-            ]
+            segments = [s for s in path.split("/") if s and s not in ["en", "stable", "latest", "docs"]]
+=======
+            path = urlparse(page['url']).path
+            segments = [s for s in path.split('/') if s and s not in ['en', 'stable', 'latest', 'docs']]
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
 
             for seg in segments:
                 url_segments[seg] += 1
@@ -1339,26 +1479,48 @@ class DocToSkillConverter:
                 categories[seg] = [seg]
 
         # Add common defaults
-        if "tutorial" not in categories and any(
-            "tutorial" in url for url in [p["url"] for p in pages]
-        ):
+        if 'tutorial' not in categories and any('tutorial' in url for url in [p['url'] for p in pages]):
+            categories['tutorials'] = ['tutorial', 'guide', 'getting-started']
+
+        if 'api' not in categories and any('api' in url or 'reference' in url for url in [p['url'] for p in pages]):
+            categories['api'] = ['api', 'reference', 'class']
+
+        return categories
+
+    def generate_quick_reference(self, pages: List[Dict[str, Any]]) -> List[Dict[str, str]]:
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
+        if "tutorial" not in categories and any("tutorial" in url for url in [p["url"] for p in pages]):
             categories["tutorials"] = ["tutorial", "guide", "getting-started"]
 
-        if "api" not in categories and any(
-            "api" in url or "reference" in url for url in [p["url"] for p in pages]
-        ):
+        if "api" not in categories and any("api" in url or "reference" in url for url in [p["url"] for p in pages]):
             categories["api"] = ["api", "reference", "class"]
 
         return categories
 
     def generate_quick_reference(self, pages: list[dict[str, Any]]) -> list[dict[str, str]]:
+=======
+        if 'tutorial' not in categories and any('tutorial' in url for url in [p['url'] for p in pages]):
+            categories['tutorials'] = ['tutorial', 'guide', 'getting-started']
+
+        if 'api' not in categories and any('api' in url or 'reference' in url for url in [p['url'] for p in pages]):
+            categories['api'] = ['api', 'reference', 'class']
+
+        return categories
+
+    def generate_quick_reference(self, pages: List[Dict[str, Any]]) -> List[Dict[str, str]]:
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
         """Generate quick reference from common patterns (NEW FEATURE)"""
         quick_ref = []
 
         # Collect all patterns
         all_patterns = []
         for page in pages:
+            all_patterns.extend(page.get('patterns', []))
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
             all_patterns.extend(page.get("patterns", []))
+=======
+            all_patterns.extend(page.get('patterns', []))
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
 
         # Get most common code patterns
         seen_codes = set()
@@ -1372,7 +1534,12 @@ class DocToSkillConverter:
 
         return quick_ref
 
+    def create_reference_file(self, category: str, pages: List[Dict[str, Any]]) -> None:
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
     def create_reference_file(self, category: str, pages: list[dict[str, Any]]) -> None:
+=======
+    def create_reference_file(self, category: str, pages: List[Dict[str, Any]]) -> None:
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
         """Create enhanced reference file"""
         if not pages:
             return
@@ -1413,17 +1580,68 @@ class DocToSkillConverter:
 
             lines.append("---\n")
 
-        filepath = os.path.join(self.skill_dir, "references", f"{category}.md")
+        filepath = os.path.join(self.skill_dir, "docs", f"{category}.md")
+        with open(filepath, 'w', encoding='utf-8') as f:
+            f.write('\n'.join(lines))
+
+        logger.info("  ✓ %s.md (%d pages)", category, len(pages))
+
+    def _infer_description_from_pages(self, categories: Dict[str, List[Dict[str, Any]]]) -> str:
+        """Infer skill description from scraped page content and titles."""
+        # Collect key terms from titles and headings
+        key_terms = []
+        common_words = {'the', 'and', 'with', 'for', 'from', 'this', 'that', 'using', 'instructional', 'video', 'example', 'code'}
+
+        for pages in categories.values():
+            for page in pages[:5]:  # First 5 pages per category
+                # Extract terms from title
+                title = page.get('title', '')
+                if title:
+                    # Extract all capitalized words and phrases
+                    words = re.findall(r'\b[A-Z][A-Za-z]+(?:\s+[A-Z][A-Za-z]+)*\b', title)
+                    for word in words:
+                        # Skip common words
+                        if word.lower() not in common_words and len(word) > 2:
+                            key_terms.append(word)
+
+                # Extract terms from headings
+                for heading in page.get('headings', [])[:3]:
+                    text = heading.get('text', '').replace('\n', ' ')
+                    words = re.findall(r'\b[A-Z][A-Za-z]+(?:\s+[A-Z][A-Za-z]+)*\b', text)
+                    for word in words:
+                        if word.lower() not in common_words and len(word) > 2:
+                            key_terms.append(word)
+
+        # Count frequency and get most common
+        from collections import Counter
+        term_counts = Counter(key_terms)
+        most_common = [term for term, count in term_counts.most_common(10)]
+
+        # Build description from key terms
+        if most_common:
+            # Limit to 8 most relevant terms
+            terms_str = ', '.join(most_common[:8])
+            return f'Use when working with {terms_str}, or {self.name} integration'
+
+        # Fallback to skill name
+        return f'Use when working with {self.name}'
+
+    def create_enhanced_skill_md(self, categories: Dict[str, List[Dict[str, Any]]], quick_ref: List[Dict[str, str]]) -> None:
+        """Create SKILL.md with actual examples (IMPROVED)"""
+        # Try to infer description if not in config
+        if 'description' not in self.config:
+            # Build description from scraped content
+            description = self._infer_description_from_pages(categories)
+        else:
+            description = self.config['description']
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
+        filepath = os.path.join(self.skill_dir, "docs", f"{category}.md")
         with open(filepath, "w", encoding="utf-8") as f:
             f.write("\n".join(lines))
 
         logger.info("  ✓ %s.md (%d pages)", category, len(pages))
 
-    def create_enhanced_skill_md(
-        self,
-        categories: dict[str, list[dict[str, Any]]],
-        quick_ref: list[dict[str, str]],
-    ) -> None:
+    def create_enhanced_skill_md(self, categories: dict[str, list[dict[str, Any]]], quick_ref: list[dict[str, str]]) -> None:
         """Create SKILL.md with actual examples (IMPROVED)"""
         # Try to infer description if not in config
         if "description" not in self.config:
@@ -1436,6 +1654,62 @@ class DocToSkillConverter:
             description = infer_description_from_docs(self.base_url, first_page_html, self.name)
         else:
             description = self.config["description"]
+=======
+        filepath = os.path.join(self.skill_dir, "docs", f"{category}.md")
+        with open(filepath, 'w', encoding='utf-8') as f:
+            f.write('\n'.join(lines))
+
+        logger.info("  ✓ %s.md (%d pages)", category, len(pages))
+
+    def _infer_description_from_pages(self, categories: Dict[str, List[Dict[str, Any]]]) -> str:
+        """Infer skill description from scraped page content and titles."""
+        # Collect key terms from titles and headings
+        key_terms = []
+        common_words = {'the', 'and', 'with', 'for', 'from', 'this', 'that', 'using', 'instructional', 'video', 'example', 'code'}
+
+        for pages in categories.values():
+            for page in pages[:5]:  # First 5 pages per category
+                # Extract terms from title
+                title = page.get('title', '')
+                if title:
+                    # Extract all capitalized words and phrases
+                    words = re.findall(r'\b[A-Z][A-Za-z]+(?:\s+[A-Z][A-Za-z]+)*\b', title)
+                    for word in words:
+                        # Skip common words
+                        if word.lower() not in common_words and len(word) > 2:
+                            key_terms.append(word)
+
+                # Extract terms from headings
+                for heading in page.get('headings', [])[:3]:
+                    text = heading.get('text', '').replace('\n', ' ')
+                    words = re.findall(r'\b[A-Z][A-Za-z]+(?:\s+[A-Z][A-Za-z]+)*\b', text)
+                    for word in words:
+                        if word.lower() not in common_words and len(word) > 2:
+                            key_terms.append(word)
+
+        # Count frequency and get most common
+        from collections import Counter
+        term_counts = Counter(key_terms)
+        most_common = [term for term, count in term_counts.most_common(10)]
+
+        # Build description from key terms
+        if most_common:
+            # Limit to 8 most relevant terms
+            terms_str = ', '.join(most_common[:8])
+            return f'Use when working with {terms_str}, or {self.name} integration'
+
+        # Fallback to skill name
+        return f'Use when working with {self.name}'
+
+    def create_enhanced_skill_md(self, categories: Dict[str, List[Dict[str, Any]]], quick_ref: List[Dict[str, str]]) -> None:
+        """Create SKILL.md with actual examples (IMPROVED)"""
+        # Try to infer description if not in config
+        if 'description' not in self.config:
+            # Build description from scraped content
+            description = self._infer_description_from_pages(categories)
+        else:
+            description = self.config['description']
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
 
         # Extract actual code examples from docs
         example_codes = []
@@ -1499,9 +1773,14 @@ This skill should be triggered when:
             for i, (lang, code) in enumerate(example_codes[:5], 1):
                 content += f"**Example {i}** ({lang}):\n```{lang}\n{code}\n```\n\n"
 
+        content += f"""## Reference Files
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
         content += """## Reference Files
+=======
+        content += f"""## Reference Files
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
 
-This skill includes comprehensive documentation in `references/`:
+This skill includes comprehensive documentation in `docs/`:
 
 """
 
@@ -1524,7 +1803,7 @@ The quick reference section above contains common patterns extracted from the of
 
 ## Resources
 
-### references/
+### docs/
 Organized documentation extracted from official sources. These files contain:
 - Detailed explanations
 - Code examples with language annotations
@@ -1557,7 +1836,12 @@ To refresh this skill with updated documentation:
 
         logger.info("  ✓ SKILL.md (enhanced with %d examples)", len(example_codes))
 
+    def create_index(self, categories: Dict[str, List[Dict[str, Any]]]) -> None:
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
     def create_index(self, categories: dict[str, list[dict[str, Any]]]) -> None:
+=======
+    def create_index(self, categories: Dict[str, List[Dict[str, Any]]]) -> None:
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
         """Create navigation index"""
         lines = []
         lines.append(f"# {self.name.title()} Documentation Index\n")
@@ -1568,9 +1852,18 @@ To refresh this skill with updated documentation:
             lines.append(f"**File:** `{cat}.md`")
             lines.append(f"**Pages:** {len(pages)}\n")
 
-        filepath = os.path.join(self.skill_dir, "references", "index.md")
+        filepath = os.path.join(self.skill_dir, "docs", "index.md")
+        with open(filepath, 'w', encoding='utf-8') as f:
+            f.write('\n'.join(lines))
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
+        filepath = os.path.join(self.skill_dir, "docs", "index.md")
         with open(filepath, "w", encoding="utf-8") as f:
             f.write("\n".join(lines))
+=======
+        filepath = os.path.join(self.skill_dir, "docs", "index.md")
+        with open(filepath, 'w', encoding='utf-8') as f:
+            f.write('\n'.join(lines))
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
 
         logger.info("  ✓ index.md")
 
@@ -1821,6 +2114,7 @@ def interactive_config() -> dict[str, Any]:
 
     config: dict[str, Any] = {}
 
+<<<<<<< HEAD
     # Basic info
     config["name"] = input("Skill name (e.g., 'react', 'godot'): ").strip()
     config["description"] = input("Skill description: ").strip()
@@ -1828,16 +2122,34 @@ def interactive_config() -> dict[str, Any]:
 
     if not config["base_url"].endswith("/"):
         config["base_url"] += "/"
+=======
+    config: Dict[str, Any] = {}
+
+    # Basic info
+    config['name'] = input("Skill name (e.g., 'react', 'godot'): ").strip()
+    config['description'] = input("Skill description: ").strip()
+    config['base_url'] = input("Base URL (e.g., https://docs.example.com/): ").strip()
+
+    if not config['base_url'].endswith('/'):
+        config['base_url'] += '/'
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
 
     # Selectors
     logger.info("\nCSS Selectors (press Enter for defaults):")
     selectors = {}
+<<<<<<< HEAD
     selectors["main_content"] = (
         input("  Main content [div[role='main']]: ").strip() or "div[role='main']"
     )
     selectors["title"] = input("  Title [title]: ").strip() or "title"
     selectors["code_blocks"] = input("  Code blocks [pre code]: ").strip() or "pre code"
     config["selectors"] = selectors
+=======
+    selectors['main_content'] = input("  Main content [div[role='main']]: ").strip() or "div[role='main']"
+    selectors['title'] = input("  Title [title]: ").strip() or "title"
+    selectors['code_blocks'] = input("  Code blocks [pre code]: ").strip() or "pre code"
+    config['selectors'] = selectors
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
 
     # URL patterns
     logger.info("\nURL Patterns (comma-separated, optional):")
@@ -1853,7 +2165,11 @@ def interactive_config() -> dict[str, Any]:
     config["rate_limit"] = float(rate) if rate else DEFAULT_RATE_LIMIT
 
     max_p = input(f"Max pages [{DEFAULT_MAX_PAGES}]: ").strip()
+<<<<<<< HEAD
     config["max_pages"] = int(max_p) if max_p else DEFAULT_MAX_PAGES
+=======
+    config['max_pages'] = int(max_p) if max_p else DEFAULT_MAX_PAGES
+>>>>>>> 9011e74 (Add SAP CDC skill building tools and configurations)
 
     return config
 

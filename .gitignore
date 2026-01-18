@@ -63,3 +63,4 @@ skill-seekers-configs/
 .mcp.json
 settings.json
 USER_GUIDE.md
+ai_config.env

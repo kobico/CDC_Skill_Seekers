@@ -1,0 +1,21 @@
+{
+  "name": "react-test",
+  "description": "Use when working with React, a JavaScript library for building user interfaces",
+  "base_url": "https://react.dev/",
+  "selectors": {
+    "main_content": "article, main",
+    "title": "h1",
+    "code_blocks": "pre code"
+  },
+  "url_patterns": {
+    "include": ["/learn", "/reference"],
+    "exclude": ["/blog", "/community"]
+  },
+  "categories": {
+    "getting_started": ["learn", "tutorial", "quick-start"],
+    "api": ["reference", "api", "hooks"],
+    "guides": ["guide", "describing"]
+  },
+  "rate_limit": 0.5,
+  "max_pages": 20
+}

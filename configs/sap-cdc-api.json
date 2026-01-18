@@ -1,0 +1,27 @@
+{
+  "name": "sap-cdc-api",
+  "description": "Use when working with SAP Customer Data Cloud (CDC) API, including REST API endpoints, authentication, user management, and data schemas",
+  "base_url": "https://help.sap.com/docs/SAP_CUSTOMER_DATA_CLOUD/8b8d6fffe113457094a17701f63e3d6a/",
+  "start_urls": [
+    "https://help.sap.com/docs/SAP_CUSTOMER_DATA_CLOUD/8b8d6fffe113457094a17701f63e3d6a/4d83300f0ac949828f9604a8abb44065.html"
+  ],
+  "selectors": {
+    "main_content": "article, .content, main, [role='main'], body",
+    "title": "h1, .title, title",
+    "code_blocks": "pre code, pre, .code-block"
+  },
+  "url_patterns": {
+    "include": ["/8b8d6fffe113457094a17701f63e3d6a/"],
+    "exclude": []
+  },
+  "categories": {
+    "api_reference": ["api", "reference", "endpoint", "rest"],
+    "authentication": ["auth", "authentication", "oauth", "token", "login"],
+    "user_management": ["user", "account", "profile", "registration"],
+    "data_schemas": ["schema", "data", "field", "attribute"],
+    "getting_started": ["getting-started", "quickstart", "intro", "overview"],
+    "guides": ["guide", "tutorial", "how-to"]
+  },
+  "rate_limit": 0.5,
+  "max_pages": 50
+}
